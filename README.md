@@ -15,5 +15,4 @@ A simple command-line program to manage student records. This project demonstrat
 
 
 Folder: student-management-system/<br>
-Files: main.c, model.c, model.h, storage.c, storage.h, ui.c, ui.h<br>
-Compilation: GCC
+Files: main.c, model.c, model.h, storage.c, storage.h, ui.c, ui.h
