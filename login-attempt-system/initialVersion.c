@@ -4,6 +4,7 @@
 
 #define MAX_PASSWORD_LENGTH 64
 #define MAX_ATTEMPTS 3
+#define DATA_FILE "account.dat"
 
 // basic data model
 typedef struct {
@@ -15,13 +16,22 @@ typedef struct {
 void login_system(Account *account);
 void initialize_account(Account *account);
 void remove_newline(char *str);
+int load_account(Account *account);
+int save_account(Account *account);
 
 int main(void) {
     Account account;
 
-    initialize_account(&account);
+    if (!load_account(&account)) {
+        initialize_account(&account);
+    }
 
     login_system(&account);
+
+    if(!save_account(&account)) {
+        printf("Failed to save the account.\n");
+        exit(EXIT_FAILURE);
+    }
 
     return EXIT_SUCCESS;
 }
@@ -58,7 +68,6 @@ void login_system(Account *account) {
                 printf("Account locked due to too many attempts.\n");
             }
         }
-        
     }
 }
 
@@ -74,6 +83,30 @@ void initialize_account(Account *account) {
     account->is_locked = 0;
 
     printf("Account created successfully!\n");
+}
+
+int load_account(Account *account) {
+    FILE *file = fopen(DATA_FILE, "rb");
+    if (file == NULL) {
+        return 0;  // File doesn't exist
+    }
+
+    size_t read = fread(account, sizeof(Account), 1, file);
+    fclose(file);
+
+    return read == 1;
+}
+
+int save_account(Account *account) {
+    FILE *file = fopen(DATA_FILE, "wb");
+    if (file == NULL) {
+        return 0;
+    }
+
+    size_t written = fwrite(account, sizeof(Account), 1, file);
+    fclose(file);
+
+    return written == 1;
 }
 
 void remove_newline(char *str) {
